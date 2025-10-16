@@ -802,38 +802,63 @@ const AppInterface = memo(() => {
             </div>
 
             {/* Info Display - Changes based on mining status */}
-            <div style={{ 
-              display: 'flex', 
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              flexWrap: 'wrap',
-              gap: '8px'
-            }}>
-              {miningProgress >= 100 && canClaim ? (
+            {miningProgress >= 100 && canClaim ? (
+              <>
+                {/* Available For Claim text */}
                 <div style={{
-                  flex: 1,
                   fontSize: '12px',
                   fontWeight: '600',
                   color: themeColors.primary,
-                  textAlign: 'left'
+                  textAlign: 'left',
+                  marginBottom: '12px'
                 }}>
-                  Claimable Balance Available For Claim
+                  Available For Claim
                 </div>
-              ) : (
-                <>
+                {/* Mined Amount with Token Logo */}
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginBottom: '12px'
+                }}>
+                  <img 
+                    src="/aiqx-star-small.png" 
+                    alt="AIQX" 
+                    style={{
+                      width: '24px',
+                      height: '24px',
+                      objectFit: 'contain'
+                    }}
+                  />
                   <span style={{
-                    fontSize: '11px',
-                    color: '#9CA3AF',
-                    fontWeight: '500'
-                  }}>Accumulating: <span style={{ color: '#E5E7EB' }}>+{(miningProgress * 0.001).toFixed(6)} AIQX</span></span>
-                  <span style={{
-                    fontSize: '11px',
-                    color: '#9CA3AF',
-                    fontWeight: '500'
-                  }}>Rate: <span style={{ color: themeColors.primary }}>{miningRate} AIQX/hr</span></span>
-                </>
-              )}
-            </div>
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    color: '#E5E7EB'
+                  }}>
+                    +{(miningProgress * 0.001).toFixed(6)} AIQX
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                gap: '8px'
+              }}>
+                <span style={{
+                  fontSize: '11px',
+                  color: '#9CA3AF',
+                  fontWeight: '500'
+                }}>Accumulating: <span style={{ color: '#E5E7EB' }}>+{(miningProgress * 0.001).toFixed(6)} AIQX</span></span>
+                <span style={{
+                  fontSize: '11px',
+                  color: '#9CA3AF',
+                  fontWeight: '500'
+                }}>Rate: <span style={{ color: themeColors.primary }}>{miningRate} AIQX/hr</span></span>
+              </div>
+            )}
 
             {/* CLAIM Button - Right aligned when at 100% */}
             {miningProgress >= 100 && canClaim && (
