@@ -764,7 +764,9 @@ const AppInterface = memo(() => {
                 cursor: miningProgress >= 100 ? 'pointer' : 'not-allowed',
                 transition: 'all 0.2s ease',
                 opacity: miningProgress >= 100 ? 1 : 0.5,
-                boxShadow: miningProgress >= 100 ? `0 4px 12px rgba(${themeColors.rgba}, 0.3)` : 'none'
+                boxShadow: miningProgress >= 100 ? `0 4px 12px rgba(${themeColors.rgba}, 0.3)` : 'none',
+                zIndex: 1000,
+                pointerEvents: miningProgress >= 100 ? 'auto' : 'none'
               }}
             >
               CLAIM

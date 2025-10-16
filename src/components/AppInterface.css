@@ -1606,6 +1606,7 @@ body::before {
     rgba(255, 215, 0, 0.2), 
     transparent);
   opacity: 0.5;
+  pointer-events: none;
 }
 
 .mining-grid-left:hover {
