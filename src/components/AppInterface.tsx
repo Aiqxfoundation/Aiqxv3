@@ -727,50 +727,59 @@ const AppInterface = memo(() => {
           </div>
           
           {/* Professional Progress Bar - Always render to prevent layout shift */}
-          <div className="mining-progress-container" style={{
-            visibility: (miningActive || miningProgress === 100 || canClaim) ? 'visible' : 'hidden',
-            opacity: (miningActive || miningProgress === 100 || canClaim) ? 1 : 0,
-            transition: 'opacity 0.3s ease',
-            height: (miningActive || miningProgress === 100 || canClaim) ? 'auto' : '180px',
-            minHeight: '180px',
-            marginTop: '-60px',
-            marginBottom: '20px',
-            padding: '20px',
-            background: 'rgba(30, 36, 46, 0.6)',
-            borderRadius: '12px',
-            border: '1px solid rgba(120, 132, 156, 0.1)',
-            position: 'relative'
-          }}>
-            {/* Claim Button in Top Right Corner */}
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                handleClaimRewards();
-              }}
-              disabled={miningProgress < 100}
-              style={{
-                position: 'absolute',
-                top: '15px',
-                right: '15px',
-                background: miningProgress >= 100 ? themeColors.primary : '#2A3441',
-                color: miningProgress >= 100 ? '#FFFFFF' : '#6B7280',
-                padding: '6px 16px',
-                borderRadius: '6px',
-                border: miningProgress >= 100 ? `1px solid ${themeColors.secondary}` : '1px solid rgba(120, 132, 156, 0.1)',
-                fontSize: '12px',
-                fontWeight: '500',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px',
-                cursor: miningProgress >= 100 ? 'pointer' : 'not-allowed',
-                transition: 'all 0.2s ease',
-                opacity: miningProgress >= 100 ? 1 : 0.5,
-                boxShadow: miningProgress >= 100 ? `0 4px 12px rgba(${themeColors.rgba}, 0.3)` : 'none',
-                zIndex: 1000,
-                pointerEvents: miningProgress >= 100 ? 'auto' : 'none'
-              }}
-            >
-              CLAIM
-            </button>
+          <div style={{ position: 'relative' }}>
+            <div className="mining-progress-container" style={{
+              visibility: (miningActive || miningProgress === 100 || canClaim) ? 'visible' : 'hidden',
+              opacity: (miningActive || miningProgress === 100 || canClaim) ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+              height: (miningActive || miningProgress === 100 || canClaim) ? 'auto' : '180px',
+              minHeight: '180px',
+              marginTop: '-60px',
+              marginBottom: '20px',
+              padding: '20px',
+              background: 'rgba(30, 36, 46, 0.6)',
+              borderRadius: '12px',
+              border: '1px solid rgba(120, 132, 156, 0.1)',
+              position: 'relative'
+            }}>
+              {/* Claim Button Overlay - Positioned absolutely in wrapper for guaranteed clicks */}
+              {miningProgress >= 100 && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '15px',
+                    right: '15px',
+                    zIndex: 9999,
+                    pointerEvents: 'auto'
+                  }}
+                >
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      console.log('CLAIM BUTTON CLICKED!');
+                      handleClaimRewards();
+                    }}
+                    style={{
+                      background: themeColors.primary,
+                      color: '#FFFFFF',
+                      padding: '6px 16px',
+                      borderRadius: '6px',
+                      border: `1px solid ${themeColors.secondary}`,
+                      fontSize: '12px',
+                      fontWeight: '500',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      boxShadow: `0 4px 12px rgba(${themeColors.rgba}, 0.3)`,
+                      pointerEvents: 'auto'
+                    }}
+                  >
+                    CLAIM
+                  </button>
+                </div>
+              )}
             
             <div className="progress-header" style={{ marginBottom: '10px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
@@ -813,6 +822,7 @@ const AppInterface = memo(() => {
               <span className="info-item">Accumulating: +{(miningProgress * 0.001).toFixed(6)} AIQX</span>
               <span className="info-item">Rate: {miningRate} AIQX/hr</span>
             </div>
+          </div>
           </div>
         </div>
 
