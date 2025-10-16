@@ -784,6 +784,53 @@ const AppInterface = memo(() => {
               <span className="info-item">Rate: {miningRate} AIQX/hr</span>
             </div>
           </div>
+
+          {/* Professional CLAIM Button - Outside clickable parent */}
+          {canClaim && miningProgress >= 100 && (
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginTop: '20px',
+              position: 'relative',
+              zIndex: 1000
+            }}>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log('CLAIM button clicked - processing reward');
+                  handleClaimRewards();
+                }}
+                style={{
+                  background: `linear-gradient(135deg, ${themeColors.gradientStart}, ${themeColors.gradientEnd})`,
+                  color: '#1A1F2E',
+                  padding: '14px 48px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  fontSize: '15px',
+                  fontWeight: '700',
+                  textTransform: 'uppercase',
+                  letterSpacing: '1px',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  boxShadow: `0 4px 20px rgba(${themeColors.rgba}, 0.4)`,
+                  minWidth: '200px',
+                  position: 'relative',
+                  overflow: 'hidden'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = `0 6px 24px rgba(${themeColors.rgba}, 0.6)`;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = `0 4px 20px rgba(${themeColors.rgba}, 0.4)`;
+                }}
+              >
+                <span style={{ position: 'relative', zIndex: 2 }}>CLAIM REWARD</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Test Button - Instant Mining Completion (for testing only) */}
