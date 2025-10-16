@@ -797,16 +797,17 @@ const AppInterface = memo(() => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                // TEMPORARY: For testing - set mining to 100% on click
-                console.log('TEST: Claim button clicked - setting mining to 100%');
-                setMiningProgress(100);
-                setCanClaim(true);
-                setMiningActive(false);
-                setCountdownSeconds(0);
+                if (canClaim && miningProgress >= 100) {
+                  console.log('CLAIM button clicked - processing reward');
+                  handleClaimRewards();
+                }
               }}
+              disabled={!canClaim || miningProgress < 100}
               style={{
-                background: `linear-gradient(135deg, ${themeColors.gradientStart}, ${themeColors.gradientEnd})`,
-                color: '#1A1F2E',
+                background: (canClaim && miningProgress >= 100) 
+                  ? `linear-gradient(135deg, ${themeColors.gradientStart}, ${themeColors.gradientEnd})`
+                  : 'rgba(120, 132, 156, 0.2)',
+                color: (canClaim && miningProgress >= 100) ? '#1A1F2E' : 'rgba(120, 132, 156, 0.5)',
                 padding: '14px 48px',
                 borderRadius: '8px',
                 border: 'none',
@@ -814,21 +815,27 @@ const AppInterface = memo(() => {
                 fontWeight: '700',
                 textTransform: 'uppercase',
                 letterSpacing: '1px',
-                cursor: 'pointer',
+                cursor: (canClaim && miningProgress >= 100) ? 'pointer' : 'not-allowed',
                 transition: 'all 0.3s ease',
-                boxShadow: `0 4px 20px rgba(${themeColors.rgba}, 0.4)`,
+                boxShadow: (canClaim && miningProgress >= 100) 
+                  ? `0 4px 20px rgba(${themeColors.rgba}, 0.4)` 
+                  : 'none',
                 minWidth: '200px',
                 position: 'relative',
                 overflow: 'hidden',
-                opacity: 1
+                opacity: (canClaim && miningProgress >= 100) ? 1 : 0.6
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-2px)';
-                e.currentTarget.style.boxShadow = `0 6px 24px rgba(${themeColors.rgba}, 0.6)`;
+                if (canClaim && miningProgress >= 100) {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = `0 6px 24px rgba(${themeColors.rgba}, 0.6)`;
+                }
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = `0 4px 20px rgba(${themeColors.rgba}, 0.4)`;
+                if (canClaim && miningProgress >= 100) {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = `0 4px 20px rgba(${themeColors.rgba}, 0.4)`;
+                }
               }}
             >
               <span style={{ position: 'relative', zIndex: 2 }}>CLAIM REWARD</span>
