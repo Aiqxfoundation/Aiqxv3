@@ -743,7 +743,10 @@ const AppInterface = memo(() => {
           }}>
             {/* Claim Button in Top Right Corner */}
             <button 
-              onClick={handleClaimRewards}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClaimRewards();
+              }}
               disabled={miningProgress < 100}
               style={{
                 position: 'absolute',
