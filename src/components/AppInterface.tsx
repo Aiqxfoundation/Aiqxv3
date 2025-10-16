@@ -80,7 +80,7 @@ const AppInterface = memo(() => {
   
   // Track if user has ever started mining (persists forever)
   const [hasEverMined, setHasEverMined] = useState(() => {
-    return localStorage.getItem('aiqx_has_ever_mined') === 'true';
+    return true; // Temporary: set to true to show mining progress for testing
   });
   
   // Debug upgrade level
@@ -90,27 +90,29 @@ const AppInterface = memo(() => {
     console.log('Timer seconds:', timerSeconds);
   }, [upgradeLevel, timerSeconds]);
   
-  // Auto-start mining for returning users
+  // Auto-start mining for returning users - TEMPORARILY DISABLED FOR TESTING
   useEffect(() => {
     // If user has mined before, automatically start mining on load
-    if (hasEverMined && !miningActive && !canClaim) {
+    // TEMPORARILY DISABLED TO SHOW COMPLETED STATE
+    /* if (hasEverMined && !miningActive && !canClaim) {
       setMiningActive(true);
       setCanClaim(false);
       setMiningProgress(0);
       setCountdownSeconds(timerSeconds);
-    }
+    } */
   }, [hasEverMined]); // Only run on initial load/hasEverMined change
   
-  // Auto-restart mining when upgrade level changes (user upgrades)
+  // Auto-restart mining when upgrade level changes (user upgrades) - TEMPORARILY DISABLED FOR TESTING
   useEffect(() => {
     // Only restart if user has mined before and upgrades
-    if (hasEverMined && upgradeLevel > 0) {
+    // TEMPORARILY DISABLED TO SHOW COMPLETED STATE
+    /* if (hasEverMined && upgradeLevel > 0) {
       // Reset and restart mining with new timer
       setMiningActive(true);
       setCanClaim(false);
       setMiningProgress(0);
       setCountdownSeconds(timerSeconds);
-    }
+    } */
   }, [upgradeLevel, timerSeconds]); // Trigger when upgrade level changes
   
   // Mining rate based on upgrade level (AIQX per hour)
@@ -726,7 +728,7 @@ const AppInterface = memo(() => {
             ) : null}
           </div>
           
-          {/* Professional Progress Bar - Always render to prevent layout shift */}
+          {/* Professional Mining Progress Container */}
           <div className="mining-progress-container" style={{
             visibility: (miningActive || miningProgress === 100 || canClaim) ? 'visible' : 'hidden',
             opacity: (miningActive || miningProgress === 100 || canClaim) ? 1 : 0,
@@ -735,111 +737,148 @@ const AppInterface = memo(() => {
             minHeight: '180px',
             marginTop: '-60px',
             marginBottom: '20px',
-            padding: '20px',
+            padding: '24px',
             background: 'rgba(30, 36, 46, 0.6)',
             borderRadius: '12px',
             border: '1px solid rgba(120, 132, 156, 0.1)',
             position: 'relative'
           }}>
             
-            <div className="progress-header" style={{ marginBottom: '10px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                <span className="progress-label">Mining Progress</span>
-                <div style={{
-                  fontSize: '14px',
-                  fontWeight: '400',
-                  color: '#9CA3AF',
-                  fontFamily: 'monospace',
-                  marginTop: '4px'
+            {/* Header */}
+            <div style={{ marginBottom: '12px' }}>
+              <span style={{
+                fontSize: '11px',
+                fontWeight: '700',
+                color: '#9CA3AF',
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }}>MINING PROGRESS</span>
+            </div>
+
+            {/* Timer Display */}
+            <div style={{
+              fontSize: '16px',
+              fontWeight: '600',
+              color: '#E5E7EB',
+              fontFamily: 'monospace',
+              marginBottom: '16px'
+            }}>
+              {Math.floor(countdownSeconds / 3600).toString().padStart(2, '0')}:
+              {Math.floor((countdownSeconds % 3600) / 60).toString().padStart(2, '0')}:
+              {(countdownSeconds % 60).toString().padStart(2, '0')}
+            </div>
+
+            {/* Progress Bar with Percentage */}
+            <div style={{ position: 'relative', marginBottom: '16px' }}>
+              <div className="professional-progress-bar" style={{ 
+                background: 'rgba(120, 132, 156, 0.15)',
+                borderRadius: '8px',
+                height: '10px',
+                overflow: 'hidden',
+                position: 'relative'
+              }}>
+                <div className="progress-fill-professional" style={{ 
+                  width: `${miningProgress}%`,
+                  background: `linear-gradient(90deg, ${themeColors.gradientStart}, ${themeColors.gradientMid}, ${themeColors.gradientEnd})`,
+                  height: '100%',
+                  transition: 'width 0.3s ease',
+                  boxShadow: `0 0 12px rgba(${themeColors.rgba}, 0.6)`
                 }}>
-                  {Math.floor(countdownSeconds / 3600).toString().padStart(2, '0')}:
-                  {Math.floor((countdownSeconds % 3600) / 60).toString().padStart(2, '0')}:
-                  {(countdownSeconds % 60).toString().padStart(2, '0')}
+                  <div className="progress-glow" style={{
+                    background: `rgba(${themeColors.rgba}, 0.3)`,
+                    height: '100%'
+                  }}></div>
                 </div>
               </div>
-              <span className="progress-percentage" style={{ color: themeColors.primary }}>{miningProgress.toFixed(1)}%</span>
-            </div>
-            <div className="professional-progress-bar" style={{ 
-              marginTop: '15px',
-              background: 'rgba(120, 132, 156, 0.1)',
-              borderRadius: '8px',
-              height: '8px',
-              overflow: 'hidden'
-            }}>
-              <div className="progress-fill-professional" style={{ 
-                width: `${miningProgress}%`,
-                background: `linear-gradient(90deg, ${themeColors.gradientStart}, ${themeColors.gradientMid}, ${themeColors.gradientEnd})`,
-                height: '100%',
-                transition: 'width 0.3s ease',
-                boxShadow: `0 0 10px rgba(${themeColors.rgba}, 0.5)`
-              }}>
-                <div className="progress-glow" style={{
-                  background: `rgba(${themeColors.rgba}, 0.3)`,
-                  height: '100%'
-                }}></div>
-              </div>
-            </div>
-            <div className="progress-info" style={{ marginTop: '15px' }}>
-              <span className="info-item">Accumulating: +{(miningProgress * 0.001).toFixed(6)} AIQX</span>
-              <span className="info-item">Rate: {miningRate} AIQX/hr</span>
-            </div>
-          </div>
-
-          {/* Professional CLAIM Button - Always visible, inactive until 100% */}
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginTop: '20px',
-            position: 'relative',
-            zIndex: 1000
-          }}>
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                if (canClaim && miningProgress >= 100) {
-                  console.log('CLAIM button clicked - processing reward');
-                  handleClaimRewards();
-                }
-              }}
-              disabled={!canClaim || miningProgress < 100}
-              style={{
-                background: (canClaim && miningProgress >= 100) 
-                  ? `linear-gradient(135deg, ${themeColors.gradientStart}, ${themeColors.gradientEnd})`
-                  : 'rgba(120, 132, 156, 0.2)',
-                color: (canClaim && miningProgress >= 100) ? '#1A1F2E' : 'rgba(120, 132, 156, 0.5)',
-                padding: '14px 48px',
-                borderRadius: '8px',
-                border: 'none',
-                fontSize: '15px',
+              {/* Percentage on right */}
+              <span style={{
+                position: 'absolute',
+                right: '0',
+                top: '-22px',
+                fontSize: '12px',
                 fontWeight: '700',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                cursor: (canClaim && miningProgress >= 100) ? 'pointer' : 'not-allowed',
-                transition: 'all 0.3s ease',
-                boxShadow: (canClaim && miningProgress >= 100) 
-                  ? `0 4px 20px rgba(${themeColors.rgba}, 0.4)` 
-                  : 'none',
-                minWidth: '200px',
-                position: 'relative',
-                overflow: 'hidden',
-                opacity: (canClaim && miningProgress >= 100) ? 1 : 0.6
-              }}
-              onMouseEnter={(e) => {
-                if (canClaim && miningProgress >= 100) {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
-                  e.currentTarget.style.boxShadow = `0 6px 24px rgba(${themeColors.rgba}, 0.6)`;
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (canClaim && miningProgress >= 100) {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = `0 4px 20px rgba(${themeColors.rgba}, 0.4)`;
-                }
-              }}
-            >
-              <span style={{ position: 'relative', zIndex: 2 }}>CLAIM REWARD</span>
-            </button>
+                color: themeColors.primary
+              }}>{miningProgress.toFixed(1)}%</span>
+            </div>
+
+            {/* Info Display - Changes based on mining status */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '8px'
+            }}>
+              {miningProgress >= 100 && canClaim ? (
+                <div style={{
+                  flex: 1,
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  color: themeColors.primary,
+                  textAlign: 'left'
+                }}>
+                  Claimable Balance Available For Claim
+                </div>
+              ) : (
+                <>
+                  <span style={{
+                    fontSize: '11px',
+                    color: '#9CA3AF',
+                    fontWeight: '500'
+                  }}>Accumulating: <span style={{ color: '#E5E7EB' }}>+{(miningProgress * 0.001).toFixed(6)} AIQX</span></span>
+                  <span style={{
+                    fontSize: '11px',
+                    color: '#9CA3AF',
+                    fontWeight: '500'
+                  }}>Rate: <span style={{ color: themeColors.primary }}>{miningRate} AIQX/hr</span></span>
+                </>
+              )}
+            </div>
+
+            {/* CLAIM Button - Right aligned when at 100% */}
+            {miningProgress >= 100 && canClaim && (
+              <div style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                marginTop: '16px'
+              }}>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (canClaim && miningProgress >= 100) {
+                      console.log('CLAIM button clicked - processing reward');
+                      handleClaimRewards();
+                    }
+                  }}
+                  style={{
+                    background: `linear-gradient(135deg, ${themeColors.gradientStart}, ${themeColors.gradientEnd})`,
+                    color: '#1A1F2E',
+                    padding: '12px 32px',
+                    borderRadius: '8px',
+                    border: 'none',
+                    fontSize: '13px',
+                    fontWeight: '700',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: `0 4px 16px rgba(${themeColors.rgba}, 0.4)`,
+                    minWidth: '160px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = `0 6px 20px rgba(${themeColors.rgba}, 0.6)`;
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = `0 4px 16px rgba(${themeColors.rgba}, 0.4)`;
+                  }}
+                >
+                  CLAIM
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
